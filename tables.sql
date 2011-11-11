@@ -1,29 +1,3 @@
--- PR_FIREWALL_VALIDATE
--- TG_FIREWALL_LOGON
--- TB_FIREWALL_OPTION
--- TB_FIREWALL_RULE
--- TB_FIREWALL_RULE_LINE
--- TB_FIREWALL_LOG
- 
-
--- TABLESPACE 
-CREATE TABLESPACE SECURITY_DAT
-    DATAFILE '/u02/oradata/tercd/dat/security_dat_01.dbf' SIZE 100M AUTOEXTEND 
-    ON NEXT  100M MAXSIZE  5G EXTENT MANAGEMENT LOCAL SEGMENT 
-    SPACE MANAGEMENT  AUTO
-/
-
--- USER 
-CREATE USER SECURITY identified by &&senha_user default tablespace &&TABLESPACE;
--- PRIVILEGES
-ALTER USER SECURITY QUOTA UNLIMITED ON &&TABLESPACE;
-GRANT CONNECT TO SECURITY;
-GRANT CREATE PROCEDURE TO SECURITY;
-GRANT CREATE TABLE TO SECURITY;
-GRANT CREATE TRIGGER TO SECURITY;
-GRANT ADMINISTER DATABASE TRIGGER TO SECURITY;
-GRANT SELECT ON SYS.V_$SESSION TO SECURITY;
- 
 -- TABLES
 CREATE TABLE TB_FIREWALL_CONFIG
 (
@@ -79,41 +53,13 @@ CREATE TABLE TB_FIREWALL_LOG
 ) TABLESPACE &&TABLESPACE
 /
 
--- SEQUENCE
-
+-- SEQUENCE FOR TABLE TB_FIRWALL_LOG
 create sequence sq_firewall_log maxvalue 99999999999999999999;
 
--- VIEW
-
-create or replace view vw_firewall_session as
-select
-   ses.sid                         sid,
-   ses.audsid                      audsid,
-   replace(ses.username,chr(0),'') username,
-   replace(ses.osuser,chr(0),'')   osuser,
-   replace(ses.machine,chr(0),'')  machine,
-   replace(ses.module,chr(0),'')   module,
-   replace(ses.program,chr(0),'')  program
-from
-   v$session ses
-where 
-   ses.username is not null;
-/   
-
--- TRIGGER
-
-create or replace trigger tg_firewall_logon after logon on database
-begin
-
-   pr_firewall_validate_logon;
-
-end;
-/
-
+-- DEFAULT VALUES FOR FIREWALL CONFIG
 insert into tb_firewall_config(name,description,enabled) values ('SERVICE_STATUS','Status do Firewall','Y');
 insert into tb_firewall_config(name,description,enabled) values ('SEND_MAIL_DBA','Envia e-mail para os DBAS','Y');
 insert into tb_firewall_config(name,description,enabled) values ('SEND_MAIL_USER','Envia e-mail para o usuário','Y');
 insert into tb_firewall_config(name,description,enabled) values ('LOG_ONLY','Loga acesso sem dropar a conexão','N');
 insert into tb_firewall_config(name,description,enabled) values ('LOG_ACCESS_DENIED','Loga acesso negado','Y');
 insert into tb_firewall_config(name,description,enabled) values ('LOG_ACCESS_ALLOWED','Loga acesso permitido','N');
-

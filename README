@@ -1,0 +1,7 @@
+####################################
+# ORACLE FIREWALL                  #
+# Criador: Israel Lopes dos Santos #
+####################################
+
+Oracle Firewall é uma camada de software que controla acesso direto a bancos de dados Oracle.
+Este projeto é baseado no DB_SECURITY criado por Maurício dos Santos Moura.

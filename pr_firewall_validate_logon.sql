@@ -1,6 +1,7 @@
 create or replace
 procedure pr_firewall_validate_logon as
 
+   -- Regras
    cursor cRules is
       select
          rl.rule,
@@ -137,7 +138,7 @@ begin
          end if;
          
          if fn_get_config('LOG_ONLY') = 'N' then
-
+            -- Mensagem enviada para usuário ao tentar conectar
             vMsgAccessDenied :='ACESSO NÃO AUTORIZADO!!!' || chr(10) ||
                                'Usuario BD: ' || x.username || chr(10) ||
                                'Usuario SO: ' || x.osuser   || chr(10) ||
